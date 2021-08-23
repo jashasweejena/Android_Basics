@@ -7,13 +7,15 @@ import com.example.android_workings.data.models.PhotoModel
 import com.example.android_workings.databinding.ItemRecyclerviewBinding
 
 class PhotosRecyclerViewAdapter(
-    private val photoList: ArrayList<PhotoModel>
+    private val photoList: ArrayList<PhotoModel>,
+    private val listener: RecyclerItemClickListener
 ) : RecyclerView.Adapter<PhotosRecyclerViewAdapter.ViewHolder>() {
 
     class ViewHolder(private val binding: ItemRecyclerviewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(photoModel: PhotoModel) {
+        fun bind(photoModel: PhotoModel, listener: RecyclerItemClickListener) {
             binding.photo = photoModel
+            binding.listener = listener
         }
     }
 
@@ -24,7 +26,7 @@ class PhotosRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(photoList[position])
+        holder.bind(photoList[position], listener)
 
 
     override fun getItemCount(): Int = photoList.size
@@ -34,4 +36,8 @@ class PhotosRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
+}
+
+interface RecyclerItemClickListener {
+    fun onClick(photoModel: PhotoModel)
 }

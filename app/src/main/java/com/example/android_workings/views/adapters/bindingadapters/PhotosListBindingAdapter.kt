@@ -7,9 +7,6 @@ import com.bumptech.glide.load.model.LazyHeaders
 
 import com.bumptech.glide.load.model.GlideUrl
 
-
-
-
 object PhotosListBindingAdapter {
     @BindingAdapter("app:thumbnail")
     @JvmStatic

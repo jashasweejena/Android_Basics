@@ -15,11 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.android_workings.R
 import com.example.android_workings.data.Status
 import com.example.android_workings.data.api.PhotosApi
+import com.example.android_workings.data.models.PhotoModel
 import com.example.android_workings.data.repositories.PhotosRepository
 import com.example.android_workings.databinding.ActivityMainBinding
 import com.example.android_workings.viewmodels.MainActivityViewModel
 import com.example.android_workings.viewmodels.MainActivityViewModelFactory
 import com.example.android_workings.views.adapters.PhotosRecyclerViewAdapter
+import com.example.android_workings.views.adapters.RecyclerItemClickListener
+import com.example.android_workings.views.fragments.DetailsFragment
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -35,7 +38,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        adapter = PhotosRecyclerViewAdapter(arrayListOf())
+        adapter = PhotosRecyclerViewAdapter(arrayListOf(), object: RecyclerItemClickListener {
+            override fun onClick(photoModel: PhotoModel) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(android.R.id.content, DetailsFragment.newInstance(photoModel.url, photoModel.title))
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+        })
 
         binding?.recyclerview?.adapter = adapter
         binding?.recyclerview?.layoutManager = LinearLayoutManager(this)
@@ -83,6 +95,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            this.finish();
+        } else {
+            supportFragmentManager.popBackStack();
+        }
     }
 
     // Lifecycle methods
