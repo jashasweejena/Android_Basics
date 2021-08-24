@@ -18,6 +18,7 @@ import com.example.android_workings.data.api.PhotosApi
 import com.example.android_workings.data.models.PhotoModel
 import com.example.android_workings.data.repositories.PhotosRepository
 import com.example.android_workings.databinding.ActivityMainBinding
+import com.example.android_workings.services.DownloadForegroundService
 import com.example.android_workings.viewmodels.MainActivityViewModel
 import com.example.android_workings.viewmodels.MainActivityViewModelFactory
 import com.example.android_workings.views.adapters.PhotosRecyclerViewAdapter
@@ -51,6 +52,11 @@ class MainActivity : AppCompatActivity() {
 
         binding?.recyclerview?.adapter = adapter
         binding?.recyclerview?.layoutManager = LinearLayoutManager(this)
+
+        binding?.downloadFab?.setOnClickListener {
+            DownloadForegroundService.startService(this, "Service started")
+        }
+
         setContentView(binding?.root)
         initViewModel()
         initData()
