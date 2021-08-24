@@ -6,6 +6,7 @@ import com.example.android_workings.data.repositories.PhotosRepository
 
 class MainActivityViewModelFactory(private val repository: PhotosRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        // Used to provide repository object to MainActivityViewModel
         return MainActivityViewModel(repository) as T
     }
 }

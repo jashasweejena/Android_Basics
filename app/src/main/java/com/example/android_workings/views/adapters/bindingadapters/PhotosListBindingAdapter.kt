@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.LazyHeaders
 
 import com.bumptech.glide.load.model.GlideUrl
+import com.example.android_workings.R
 
 object PhotosListBindingAdapter {
     @BindingAdapter("app:thumbnail")
@@ -18,6 +19,7 @@ object PhotosListBindingAdapter {
         )
         Glide.with(imageView.context)
             .load(url)
+            .placeholder(R.drawable.image_placeholder)
             .into(imageView)
     }
 }

@@ -16,6 +16,7 @@ class MainActivityViewModel(val repository: PhotosRepository) : ViewModel() {
     private val _photosListLiveData: MutableLiveData<Resource<ArrayList<PhotoModel>>> = MutableLiveData()
     val photosListLiveData: LiveData<Resource<ArrayList<PhotoModel>>> = _photosListLiveData;
 
+    // Fetches List<PhotoModel> from repository
     fun getPhotos() {
         viewModelScope.launch(Dispatchers.Main) {
             _photosListLiveData.postValue(Resource.loading(null))
