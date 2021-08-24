@@ -35,7 +35,6 @@ class PhotosRecyclerViewAdapter(
         photoList.addAll(list)
         notifyDataSetChanged()
     }
-
 }
 
 interface RecyclerItemClickListener {

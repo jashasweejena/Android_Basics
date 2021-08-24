@@ -22,9 +22,11 @@ class MainActivityViewModel(val repository: PhotosRepository) : ViewModel() {
             _photosListLiveData.postValue(Resource.loading(null))
 
             try {
+                // Fetch Photos in Background thread
                 withContext(Dispatchers.IO) {
                     val photosList = repository.getPhotos()
                     withContext(Dispatchers.Main) {
+                        // Post result to Activity
                         if (photosList.isNotEmpty()) {
                             _photosListLiveData.postValue(Resource.success(photosList))
                         }

@@ -1,18 +1,12 @@
 package com.example.android_workings.views.activities
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.android_workings.R
 import com.example.android_workings.data.Status
 import com.example.android_workings.data.api.PhotosApi
 import com.example.android_workings.data.models.PhotoModel
@@ -26,11 +20,14 @@ import com.example.android_workings.views.adapters.RecyclerItemClickListener
 import com.example.android_workings.views.fragments.DetailsFragment
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.recyclerview.widget.DividerItemDecoration
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }
+
     lateinit var viewModel: MainActivityViewModel
     var binding: ActivityMainBinding? = null
     var adapter: PhotosRecyclerViewAdapter? = null
@@ -38,26 +35,35 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
 
-        adapter = PhotosRecyclerViewAdapter(arrayListOf(), object: RecyclerItemClickListener {
+        // Initialize RecyclerView and Adapter
+        adapter = PhotosRecyclerViewAdapter(arrayListOf(), object : RecyclerItemClickListener {
             override fun onClick(photoModel: PhotoModel) {
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(android.R.id.content, DetailsFragment.newInstance(photoModel.url, photoModel.title))
+                // Open DetailsFragment on item click
+                supportFragmentManager.beginTransaction()
+                    .replace(
+                        android.R.id.content,
+                        DetailsFragment.newInstance(photoModel.url, photoModel.title)
+                    )
                     .addToBackStack(null)
                     .commit()
             }
-
         })
 
         binding?.recyclerview?.adapter = adapter
         binding?.recyclerview?.layoutManager = LinearLayoutManager(this)
+        val dividerItemDecoration = DividerItemDecoration(
+            binding?.recyclerview?.context,
+            (binding?.recyclerview?.layoutManager as LinearLayoutManager).orientation
+        )
+        binding?.recyclerview?.addItemDecoration(dividerItemDecoration)
 
+        // Start downloading of file using DownloadForegroundService
         binding?.downloadFab?.setOnClickListener {
             DownloadForegroundService.startService(this, "Service started")
         }
 
-        setContentView(binding?.root)
         initViewModel()
         initData()
         initObservers()
@@ -82,11 +88,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
+        // Observe status of photosListLiveData
         viewModel.photosListLiveData.observe(this, {
-            when(it.status) {
+            when (it.status) {
+                // Show a circular progress bar since it is loading
                 Status.LOADING -> {
                     binding?.circularProgressBar?.visibility = View.VISIBLE
                 }
+
+                // Hide progressbar and update item in RecyclerView adapter
                 Status.SUCCESS -> {
                     it.data?.let { arrayList ->
                         adapter?.updateList(arrayList)
@@ -94,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                // Show a toast in case of error
                 Status.ERROR -> {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "initObservers: " + it.message)
@@ -103,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    // Handles fragment backstack popping
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             this.finish();
