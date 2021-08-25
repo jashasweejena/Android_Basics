@@ -21,6 +21,8 @@ import com.example.android_workings.views.fragments.DetailsFragment
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.android_workings.database.AppDatabase
+import com.example.android_workings.database.getDatabase
 
 
 class MainActivity : AppCompatActivity() {
@@ -76,7 +78,8 @@ class MainActivity : AppCompatActivity() {
             .build()
             .create(PhotosApi::class.java)
 
-        val photosRepository = PhotosRepository(api)
+        val appDatabase = getDatabase(applicationContext)
+        val photosRepository = PhotosRepository(api, appDatabase)
         val viewModelFactory = MainActivityViewModelFactory(photosRepository)
 
         viewModel = ViewModelProvider(this, viewModelFactory)

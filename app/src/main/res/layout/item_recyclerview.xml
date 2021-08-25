@@ -48,7 +48,7 @@
             android:id="@+id/id_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{photo.id.toString()}"
+            android:text="@{String.valueOf(photo.id)}"
             android:textColor="?android:textColorPrimary"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="@+id/title_tv"
